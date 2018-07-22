@@ -20,6 +20,7 @@ class Board:
         self.spawn_minimum()
 
     def generate_minimum(self):
+        """generate minimum number cell"""
         return 2
 
     def empty_cells(self):
@@ -31,9 +32,40 @@ class Board:
         return result
 
     def spawn_minimum(self):
+        """spawn minimum number cell randomly if there is empty cell, otherwise raises GameOver"""
         _min = self.generate_minimum()
         empty_cells = self.empty_cells()
         if not empty_cells:
             raise GameOver
         i, j = random.choice(list(empty_cells))
         self.grid[i][j] = _min
+
+    def compress(self, arr):
+        if not None in arr:
+            return arr
+        for i in range(1, len(arr)):
+            if arr[i] is None:
+                continue
+            j = i - 1
+            while arr[j] is None:
+                j -= 1
+                if j == -1:
+                    break
+            if arr[j+1] is None:
+                arr[j+1] = arr[i]
+                arr[i] = None
+        return arr
+
+    def merge(self, arr):
+        i = 0
+        while i < len(arr)-1:
+            if arr[i] == arr[i+1] and arr[i] is not None:
+                arr[i] *= 2
+                arr[i+1] = None
+                i += 2
+            else:
+                i += 1
+        return arr
+
+    def collapse(self, arr):
+        return self.compress(self.merge(self.compress(arr)))

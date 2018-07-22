@@ -1,6 +1,6 @@
 import unittest
 
-from core import Board
+from core import Board, GameOver
 
 
 class TestBoard(unittest.TestCase):
@@ -40,7 +40,7 @@ class TestBoard(unittest.TestCase):
         expected = {(0, 0), (1, 0), (1, 1), (2, 0), (2, 1), (3, 0), (3, 1), (3, 3)}
         self.assertEqual(empty_cells, expected)
 
-    def test_spawn_minumum_0(self):
+    def test_spawn_minimum_0(self):
         b = Board(self.seed)
 
         b.spawn_minimum()
@@ -52,7 +52,25 @@ class TestBoard(unittest.TestCase):
         expected[3][0] = 2
         self.assertEqual(b.grid, expected)
 
+    def test_spawn_minimum_1(self):
+        b = Board(self.seed)
+        b.grid = [[... for _ in range(b.col)] for _ in range(b.row)]
+        self.assertRaises(GameOver, b.spawn_minimum)
 
+    def test_collapse_0(self):
+        b = Board()
+
+        arr = [None, 2, None, 4]
+        self.assertEqual(b.collapse(arr), [2, 4, None, None])
+
+        arr = [8, 8, 8, 8]
+        self.assertEqual(b.collapse(arr), [16, 16, None, None])
+
+        arr = [2, 2, 4, 4]
+        self.assertEqual(b.collapse(arr), [4, 8, None, None])
+
+        arr = [2, 4, 8, 4]
+        self.assertEqual(b.collapse(arr), [2, 4, 8, 4])
 
 if __name__ == '__main__':
     unittest.main()
